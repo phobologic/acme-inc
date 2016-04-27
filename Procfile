@@ -1,10 +1,6 @@
 web: 
   command: acme-inc server
-  expose:
-    protocol: http
+  ports:
+    - 80:80
 worker:
   command: acme-inc worker
-api:
-  command: acme-inc server
-  expose:
-    protocol: http
