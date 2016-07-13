@@ -13,7 +13,8 @@ import (
 
 func main() {
 	var (
-		port = flag.String("port", env("PORT", "8080"), "The port")
+		port = flag.String("port", env("PORT", "80"), "The port")
+		_    = flag.String("admin-port", env("PORT", "8080"), "The port for the admin api")
 	)
 	flag.Parse()
 
