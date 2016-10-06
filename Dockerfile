@@ -5,7 +5,6 @@ COPY ./ /go/src/github.com/remind101/acme-inc
 RUN go install github.com/remind101/acme-inc
 WORKDIR /go/src/github.com/remind101/acme-inc
 
-EXPOSE 80
 EXPOSE 8080
 
 CMD ["acme-inc", "server"]

@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -13,8 +12,7 @@ import (
 
 func main() {
 	var (
-		port = flag.String("port", env("PORT", "80"), "The port")
-		_    = flag.String("admin-port", env("PORT", "8080"), "The port for the admin api")
+		_ = flag.String("admin-port", env("PORT", "8080"), "The port for the admin api")
 	)
 	flag.Parse()
 
@@ -27,11 +25,12 @@ func main() {
 
 	switch cmd {
 	case "server":
-		log.Printf("Starting on %s", *port)
-		log.Fatal(http.ListenAndServe(":"+*port, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		port := "8080"
+		log.Println("Starting on port", port)
+		log.Fatal(http.ListenAndServe(":"+port, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Printf("%s - %s", r.Method, r.URL)
 			w.WriteHeader(200)
-			io.WriteString(w, "Ok\n")
+			fmt.Fprintf(w, "Hello from port %s\n", port)
 		})))
 	case "worker":
 		for {
