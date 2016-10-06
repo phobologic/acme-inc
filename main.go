@@ -3,19 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 )
 
 func main() {
-	var (
-		port = flag.String("port", env("PORT", "80"), "The port")
-		_    = flag.String("admin-port", env("PORT", "8080"), "The port for the admin api")
-	)
 	flag.Parse()
 
 	args := flag.Args()
@@ -27,12 +23,18 @@ func main() {
 
 	switch cmd {
 	case "server":
-		log.Printf("Starting on %s", *port)
-		log.Fatal(http.ListenAndServe(":"+*port, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Printf("%s - %s", r.Method, r.URL)
-			w.WriteHeader(200)
-			io.WriteString(w, "Ok\n")
-		})))
+		for _, port := range []string{"80", "8080"} {
+			port := port
+			log.Printf("Starting on %s", port)
+			go http.ListenAndServe(":"+port, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				log.Printf("%s - %s", r.Method, r.URL)
+				w.WriteHeader(200)
+				fmt.Fprintf(w, "Hello from port %s\n", port)
+			}))
+		}
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		<-c
 	case "worker":
 		for {
 			<-time.After(1 * time.Second)
